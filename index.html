@@ -465,7 +465,14 @@ function checkTrialEnd() {
     }
   }
 }
+function testSubscriptionScreen() {
+  localStorage.setItem(
+    "solofocus15_trial_start",
+    (Date.now() - 8 * 86400000).toString()
+  );
 
+  checkTrialEnd();
+}
 checkTrialEnd();
 <script>
 let current = 0;
