@@ -1,1155 +1,406 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SoloFocus 15</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoloFocus 15</title>
+
 <style>
-  :root {
-    --cream: #fbf5e9;
-    --paper: #fffdf8;
-    --green: #21483b;
-    --green-light: #dce9d5;
-    --sage: #b9d2b3;
-    --peach: #f6c4a5;
-    --peach-light: #fde3d2;
-    --gold: #e5b95f;
-    --gold-light: #f8e8b9;
-    --text: #263b32;
-    --muted: #77857b;
-    --border: #eadfd0;
-    --shadow: 0 18px 45px rgba(52, 70, 54, 0.09);
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background:
-      radial-gradient(circle at 10% 5%, #f6d9bd 0, transparent 28%),
-      radial-gradient(circle at 95% 25%, #d9e8d1 0, transparent 25%),
-      var(--cream);
-    color: var(--text);
-    font-family: Arial, sans-serif;
-  }
-
-  body::before,
-  body::after {
-    content: "";
-    position: fixed;
-    z-index: -1;
-    border-radius: 50%;
-    pointer-events: none;
-  }
-
-  body::before {
-    width: 180px;
-    height: 180px;
-    left: -80px;
-    bottom: 12%;
-    background: var(--peach-light);
-    opacity: 0.65;
-  }
-
-  body::after {
-    width: 140px;
-    height: 140px;
-    right: -60px;
-    bottom: 5%;
-    background: var(--gold-light);
-    opacity: 0.7;
-  }
-
-  button,
-  input {
-    font: inherit;
-  }
-
-  button {
-    cursor: pointer;
-  }
-
-  .app {
-    position: relative;
-    width: 100%;
-    max-width: 480px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 24px 20px 30px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .app::before {
-    content: "✦";
-    position: absolute;
-    top: 90px;
-    right: 22px;
-    color: var(--gold);
-    font-size: 28px;
-    transform: rotate(12deg);
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .app::after {
-    content: "·  ·  ·";
-    position: absolute;
-    top: 135px;
-    left: 8px;
-    color: var(--peach);
-    font-size: 22px;
-    letter-spacing: 3px;
-  }
-
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 22px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 800;
-    color: var(--green);
-    letter-spacing: -0.6px;
-  }
-
-  .logo::before {
-    content: "◒";
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 10px;
-    background: var(--peach);
-    color: var(--green);
-    font-size: 18px;
-  }
-
-  .step {
-    padding: 8px 11px;
-    border-radius: 30px;
-    background: rgba(255, 253, 248, 0.7);
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .progress {
-    height: 8px;
-    background: #eee5d7;
-    border-radius: 20px;
-    overflow: hidden;
-    margin-bottom: 42px;
-  }
-
-  .progress-bar {
-    height: 100%;
-    width: 10%;
-    background: linear-gradient(90deg, var(--green), #6d9b78);
-    border-radius: 20px;
-    transition: width 0.4s ease;
-  }
-
-  .screen {
-    display: none;
-    flex: 1;
-    animation: appear 0.4s ease;
-  }
-
-  .screen.active {
-    display: flex;
-    flex-direction: column;
-  }
-
-  @keyframes appear {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0) rotate(12deg);
-    }
-
-    50% {
-      transform: translateY(-8px) rotate(20deg);
-    }
-  }
-
-  .eyebrow {
-    display: inline-flex;
-    align-self: flex-start;
-    padding: 8px 12px;
-    border-radius: 30px;
-    background: var(--green-light);
-    color: var(--green);
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 18px;
-  }
-
-  h1 {
-    max-width: 390px;
-    font-size: clamp(38px, 10vw, 54px);
-    line-height: 1.02;
-    letter-spacing: -2.8px;
-    margin: 0 0 22px;
-    color: var(--green);
-  }
-
-  h2 {
-    max-width: 390px;
-    font-size: 32px;
-    line-height: 1.08;
-    letter-spacing: -1.4px;
-    margin: 0 0 16px;
-    color: var(--green);
-  }
-
-  p {
-    color: var(--muted);
-    font-size: 17px;
-    line-height: 1.55;
-    margin: 0 0 28px;
-  }
-
-  .spacer {
-    flex: 1;
-    min-height: 34px;
-  }
-
-  .button {
-    width: 100%;
-    border: 0;
-    border-radius: 17px;
-    padding: 18px 20px;
-    font-weight: 800;
-    font-size: 16px;
-    background: var(--green);
-    color: white;
-    box-shadow: 0 9px 18px rgba(33, 72, 59, 0.16);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 13px 24px rgba(33, 72, 59, 0.2);
-  }
-
-  .button.secondary {
-    background: transparent;
-    color: var(--green);
-    box-shadow: none;
-    margin-top: 10px;
-  }
-
-  .button.light {
-    background: var(--peach);
-    color: var(--green);
-    box-shadow: 0 8px 18px rgba(246, 196, 165, 0.3);
-  }
-
-  .choice-list {
-    display: grid;
-    gap: 12px;
-  }
-
-  .choice {
-    position: relative;
-    border: 2px solid var(--border);
-    background: rgba(255, 253, 248, 0.88);
-    color: var(--text);
-    text-align: left;
-    border-radius: 18px;
-    padding: 17px 18px;
-    font-size: 15px;
-    line-height: 1.4;
-    box-shadow: 0 5px 14px rgba(52, 70, 54, 0.035);
-    transition: 0.2s;
-  }
-
-  .choice::after {
-    content: "→";
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #b6c0b3;
-    font-size: 18px;
-  }
-
-  .choice:hover,
-  .choice.selected {
-    border-color: var(--green);
-    background: var(--green-light);
-    transform: translateY(-2px);
-  }
-
-  .choice.selected::after {
-    content: "✓";
-    color: var(--green);
-    font-weight: 800;
-  }
-
-  .choice strong {
-    display: block;
-    color: var(--green);
-    margin-bottom: 5px;
-    padding-right: 24px;
-  }
-
-  .choice small {
-    color: var(--muted);
-    padding-right: 24px;
-  }
-
-  .value-card {
-    position: relative;
-    overflow: hidden;
-    background: var(--green);
-    color: white;
-    border-radius: 30px;
-    padding: 34px 24px;
-    text-align: center;
-    margin: 10px 0 24px;
-    box-shadow: var(--shadow);
-  }
-
-  .value-card::before,
-  .value-card::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .value-card::before {
-    width: 150px;
-    height: 150px;
-    top: -80px;
-    right: -40px;
-  }
-
-  .value-card::after {
-    width: 100px;
-    height: 100px;
-    bottom: -60px;
-    left: -20px;
-  }
-
-  .value-card .number {
-    font-size: 58px;
-    line-height: 1;
-    font-weight: 800;
-    letter-spacing: -4px;
-    margin: 15px 0;
-    color: #fff8df;
-  }
-
-  .value-card p {
-    position: relative;
-    color: #dce9d5;
-    font-size: 15px;
-    margin: 0;
-  }
-
-  .task-input {
-    width: 100%;
-    border: 2px solid var(--border);
-    border-radius: 17px;
-    background: var(--paper);
-    padding: 18px;
-    font-size: 16px;
-    outline: none;
-    color: var(--text);
-    margin-bottom: 14px;
-    box-shadow: 0 5px 14px rgba(52, 70, 54, 0.035);
-  }
-
-  .task-input:focus {
-    border-color: var(--green);
-    box-shadow: 0 0 0 4px var(--green-light);
-  }
-
-  .task-card {
-    position: relative;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 24px;
-    margin-bottom: 22px;
-    box-shadow: var(--shadow);
-  }
-
-  .task-card::before {
-    content: "✦";
-    position: absolute;
-    top: 18px;
-    right: 20px;
-    color: var(--gold);
-    font-size: 24px;
-  }
-
-  .task-label {
-    color: var(--muted);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 800;
-    margin-bottom: 8px;
-  }
-
-  .task-title {
-    color: var(--green);
-    font-weight: 800;
-    font-size: 21px;
-    line-height: 1.25;
-    margin-bottom: 22px;
-    padding-right: 24px;
-  }
-
-  .timer-card {
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 30px;
-    padding: 34px 20px;
-    margin-bottom: 22px;
-    box-shadow: var(--shadow);
-  }
-
-  .timer-card::before {
-    content: "";
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    border: 18px solid var(--green-light);
-    border-radius: 50%;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0.55;
-  }
-
-  .timer {
-    position: relative;
-    font-size: 76px;
-    letter-spacing: -5px;
-    font-weight: 800;
-    color: var(--green);
-    margin: 24px 0;
-  }
-
-  .timer-label {
-    position: relative;
-    color: var(--muted);
-    font-size: 14px;
-  }
-
-  .success-icon {
-    width: 96px;
-    height: 96px;
-    display: grid;
-    place-items: center;
-    margin: 0 auto 26px;
-    background: var(--gold-light);
-    color: var(--green);
-    border: 8px solid #fff8df;
-    border-radius: 50%;
-    font-size: 44px;
-    box-shadow: 0 10px 25px rgba(229, 185, 95, 0.2);
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .paywall {
-    position: relative;
-    overflow: hidden;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    padding: 25px;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow);
-  }
-
-  .paywall::before {
-    content: "✦";
-    position: absolute;
-    right: 20px;
-    top: 16px;
-    color: var(--gold);
-    font-size: 28px;
-  }
-
-  .paywall h3 {
-    color: var(--green);
-    font-size: 25px;
-    line-height: 1.15;
-    margin: 0 35px 12px 0;
-  }
-
-  .benefits {
-    display: grid;
-    gap: 12px;
-    margin: 22px 0;
-  }
-
-  .benefit {
-    display: flex;
-    gap: 10px;
-    color: var(--text);
-    font-size: 15px;
-    line-height: 1.4;
-  }
-
-  .benefit span {
-    display: grid;
-    place-items: center;
-    flex: 0 0 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--green-light);
-    color: var(--green);
-    font-size: 12px;
-    font-weight: 800;
-  }
-
-  .plans {
-    display: grid;
-    gap: 12px;
-    margin: 22px 0;
-  }
-
-  .plan {
-    border: 2px solid var(--border);
-    border-radius: 18px;
-    padding: 17px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    transition: 0.2s;
-  }
-
-  .plan:hover,
-  .plan.recommended {
-    border-color: var(--green);
-    background: var(--green-light);
-  }
-
-  .plan.recommended::before {
-    content: "RECOMENDADO";
-    position: absolute;
-  }
-
-  .plan-title {
-    font-weight: 800;
-    color: var(--green);
-    margin-bottom: 5px;
-  }
-
-  .plan-subtitle {
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  .plan-price {
-    color: var(--green);
-    font-weight: 800;
-    text-align: right;
-    font-size: 17px;
-  }
-
-  .plan-price small {
-    display: block;
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 400;
-    margin-top: 3px;
-  }
-
-  .legal {
-    color: var(--muted);
-    font-size: 11px;
-    line-height: 1.5;
-    text-align: center;
-    margin-top: 14px;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  @media (max-width: 380px) {
-    .app {
-      padding: 20px 16px 26px;
-    }
-
-    h1 {
-      font-size: 38px;
-    }
-
-    h2 {
-      font-size: 28px;
-    }
-
-    .timer {
-      font-size: 62px;
-    }
-  }
+:root {
+  --cream: #fff8ed;
+  --green: #24483d;
+  --sage: #c9d8c2;
+  --peach: #f5c7a9;
+  --gold: #e8b95b;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--cream);
+  color: var(--green);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 650px;
+  background: var(--white);
+  border-radius: 30px;
+  padding: 24px;
+  box-shadow: 0 12px 35px rgba(36,72,61,.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.app::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: var(--sage);
+  border-radius: 50%;
+  top: -90px;
+  right: -70px;
+  opacity: .55;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.logo span {
+  color: var(--gold);
+}
+
+.progress {
+  height: 7px;
+  background: #edf0e9;
+  border-radius: 20px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 10%;
+  background: var(--gold);
+  border-radius: 20px;
+  transition: width .3s;
+}
+
+.screen {
+  display: none;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.screen.active {
+  display: block;
+}
+
+.illustration {
+  width: 145px;
+  height: 145px;
+  margin: 15px auto 25px;
+  border-radius: 45% 55% 50% 50%;
+  background: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 65px;
+  box-shadow: 0 8px 0 rgba(36,72,61,.06);
+}
+
+h1 {
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 12px 0;
+}
+
+h2 {
+  font-size: 25px;
+  line-height: 1.2;
+  margin: 12px 0;
+}
+
+p {
+  color: #61756b;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 14px;
+  background: var(--green);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button.secondary {
+  background: var(--peach);
+  color: var(--green);
+}
+
+.option {
+  width: 100%;
+  text-align: left;
+  background: #f8faf5;
+  color: var(--green);
+  border: 2px solid transparent;
+  margin-top: 12px;
+}
+
+.option.selected {
+  border-color: var(--gold);
+  background: #fff8e5;
+}
+
+.small {
+  font-size: 13px;
+  margin-top: 18px;
+}
+
+.task {
+  background: #f8faf5;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: left;
+  margin: 20px 0;
+}
+
+.task strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.timer {
+  font-size: 62px;
+  font-weight: bold;
+  margin: 25px 0;
+  letter-spacing: 2px;
+}
+
+.success {
+  background: var(--gold);
+}
+
+.price {
+  font-size: 35px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.footer {
+  text-align: center;
+  color: #819087;
+  font-size: 12px;
+  margin-top: 25px;
+}
 </style>
- 
 </head>
 
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="logo">SoloFocus 15</div>
-      <div class="step" id="stepText">Paso 1 de 10</div>
-    </header>
 
-    <div class="progress">
-      <div class="progress-bar" id="progressBar"></div>
+<div class="app">
+
+  <div class="logo">Solo<span>Focus</span> 15</div>
+
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <section class="screen active">
+    <div class="illustration">🌱</div>
+    <h1>Un pequeño paso puede cambiar tu día</h1>
+    <p>En solo 15 minutos, vamos a ayudarte a comenzar algo que importa.</p>
+    <button onclick="next()">Comenzar</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">☁️</div>
+    <h2>¿Qué te está deteniendo?</h2>
+    <p>Elige lo que más se parece a lo que sientes hoy.</p>
+    <button class="option" onclick="selectOption(this)">No sé por dónde empezar</button>
+    <button class="option" onclick="selectOption(this)">Tengo demasiadas cosas</button>
+    <button class="option" onclick="selectOption(this)">Me cuesta concentrarme</button>
+    <button onclick="next()">Continuar</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">🧭</div>
+    <h2>¿Dónde quieres poner tu atención?</h2>
+    <p>Escoge un área pequeña para comenzar.</p>
+    <button class="option" onclick="selectOption(this)">💼 Trabajo o estudios</button>
+    <button class="option" onclick="selectOption(this)">🏠 Casa y pendientes</button>
+    <button class="option" onclick="selectOption(this)">💚 Cuidado personal</button>
+    <button onclick="next()">Elegir esta área</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">📅</div>
+    <h2>Tu compromiso de hoy</h2>
+    <p>No necesitas terminarlo todo. Solo necesitas regalarte 15 minutos.</p>
+    <div class="task">
+      <strong>Mi compromiso:</strong>
+      Haré una cosa pequeña, sin buscar hacerlo perfecto.
     </div>
-
-    <!-- 1. Bienvenida -->
-    <section class="screen active" data-screen="0">
-      <div class="eyebrow">El Método Primer Paso</div>
-      <h1>Deja de organizar tu día. Empieza a avanzar.</h1>
-      <p>
-        Convierte una tarea pendiente en un primer paso claro
-        y trabaja en él durante solo 15 minutos.
-      </p>
-
-      <div class="spacer"></div>
-
-      <button class="button" onclick="nextScreen()">
-        Empezar
-      </button>
-    </section>
-
-    <!-- 2. Bloqueo -->
-    <section class="screen" data-screen="1">
-      <h2>¿Qué es lo que más te cuesta al empezar una tarea?</h2>
-      <p>Elige la opción que más se parece a tu situación.</p>
-
-      <div class="choice-list">
-        <button class="choice" onclick="selectChoice(this)">
-          Me toma demasiado tiempo empezar.
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Me distraigo fácilmente.
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Procrastino aunque sé qué debo hacer.
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          No sé por dónde empezar.
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Tengo demasiadas cosas en la cabeza.
-        </button>
-      </div>
-
-      <div class="spacer"></div>
-
-      <button class="button" onclick="nextScreen()">
-        Continuar
-      </button>
-    </section>
-
-    <!-- 3. Área -->
-    <section class="screen" data-screen="2">
-      <h2>¿Dónde quieres avanzar primero?</h2>
-      <p>No tienes que resolverlo todo hoy. Vamos a empezar por un área.</p>
-
-      <div class="choice-list">
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Trabajo o proyectos</strong>
-          <small>Avanzar en lo que tienes pendiente.</small>
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Estudio o aprendizaje</strong>
-          <small>Aprender sin sentirte abrumado.</small>
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Orden y tareas del hogar</strong>
-          <small>Recuperar un poco de espacio y calma.</small>
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Ejercicio y salud</strong>
-          <small>Dar un pequeño paso por tu bienestar.</small>
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Proyectos personales</strong>
-          <small>Volver a eso que quieres construir.</small>
-        </button>
-      </div>
-
-      <div class="spacer"></div>
-
-      <button class="button" onclick="nextScreen()">
-        Continuar
-      </button>
-    </section>
-
-    <!-- 4. Compromiso -->
-    <section class="screen" data-screen="3">
-      <h2>¿Cuánto tiempo quieres reservar para ti cada día?</h2>
-      <p>Elige un ritmo que puedas mantener sin presión.</p>
-
-      <div class="choice-list">
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Casual · 1 bloque de 15 min</strong>
-          <small>Para empezar sin presión.</small>
-        </button>
-
-        <button class="choice selected" onclick="selectChoice(this)">
-          <strong>Constante · 2 bloques de 15 min</strong>
-          <small>Para crear un ritmo sostenible.</small>
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          <strong>Pro · 3 bloques de 15 min</strong>
-          <small>Para avanzar con más intensidad.</small>
-        </button>
-      </div>
-
-      <div class="spacer"></div>
-
-      <button class="button" onclick="nextScreen()">
-        Elegir este ritmo
-      </button>
-    </section>
-
-    <!-- 5. Valor -->
-    <section class="screen" data-screen="4">
-      <div class="eyebrow">Tu progreso se acumula</div>
-      <h2>Un pequeño bloque puede convertirse en mucho progreso.</h2>
-
-      <div class="value-card">
-        <div>15 minutos al día</div>
-        <div class="number">91+ horas</div>
-        <p>de avance posible durante un año.</p>
-      </div>
-
-      <p>
-        No necesitas encontrar un día perfecto.
-        Solo necesitas empezar hoy.
-      </p>
-
-      <div class="spacer"></div>
-
-      <button class="button" onclick="nextScreen()">
-        Quiero empezar
-      </button>
-    </section>
-
-    <!-- 6. Primera tarea -->
-    <section class="screen" data-screen="5">
-      <h2>Vamos a conseguir tu primera victoria.</h2>
-      <p>Elige algo que puedas avanzar en 15 minutos.</p>
-
-      <div class="choice-list">
-        <button class="choice" onclick="chooseTask('Responder un mensaje importante')">
-          Responder un mensaje importante.
-        </button>
-
-        <button class="choice" onclick="chooseTask('Ordenar una pequeña superficie')">
-          Ordenar una pequeña superficie.
-        </button>
-
-        <button class="choice" onclick="chooseTask('Leer o estudiar una página')">
-          Leer o estudiar una página.
-        </button>
-
-        <button class="choice" onclick="chooseTask('Preparar el primer paso de un proyecto')">
-          Preparar el primer paso de un proyecto.
-        </button>
-
-        <button class="choice" onclick="showCustomTask()">
-          Escribir mi propia tarea.
-        </button>
-      </div>
-
-      <div id="customTask" class="hidden" style="margin-top: 16px;">
-        <input
-          class="task-input"
-          id="customTaskInput"
-          placeholder="Ejemplo: preparar la presentación del lunes"
-        />
-
-        <button class="button" onclick="saveCustomTask()">
-          Usar esta tarea
-        </button>
-      </div>
-
-      <div class="spacer"></div>
-    </section>
-
-    <!-- 7. Preparar tarea -->
-    <section class="screen" data-screen="6">
-      <h2>Tu primer paso está listo.</h2>
-      <p>La clave no es terminarlo todo. Es saber cómo empezar.</p>
-
-      <div class="task-card">
-        <div class="task-label">Tarea</div>
-        <div class="task-title" id="taskTitle">
-          Preparar el primer paso de un proyecto.
-        </div>
-
-        <div class="task-label">Primer paso sugerido</div>
-        <p id="firstStep">
-          Abrir el documento y escribir tres ideas principales.
-        </p>
-
-        <div class="task-label">Duración</div>
-        <strong>15 minutos</strong>
-      </div>
-
-      <button class="button" onclick="nextScreen()">
-        Preparar mi bloque
-      </button>
-
-      <button class="button secondary" onclick="goToScreen(5)">
-        Cambiar tarea
-      </button>
-    </section>
-
-    <!-- 8. Recordatorio -->
-    <section class="screen" data-screen="7">
-      <h2>¿Cuándo te gustaría recibir un pequeño recordatorio?</h2>
-      <p>Elige un momento que funcione para ti.</p>
-
-      <div class="choice-list">
-        <button class="choice" onclick="selectChoice(this)">
-          Por la mañana
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Por la tarde
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Por la noche
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Elegir una hora
-        </button>
-
-        <button class="choice" onclick="selectChoice(this)">
-          Ahora no
-        </button>
-      </div>
-
-      <div class="spacer"></div>
-
-      <button class="button" onclick="nextScreen()">
-        Continuar
-      </button>
-    </section>
-
-    <!-- 9. Cuenta -->
-    <section class="screen" data-screen="8">
-      <h2>Guarda tu progreso.</h2>
-      <p>
-        Crea una cuenta para conservar tus tareas, bloques y rachas.
-      </p>
-
-      <button class="button" onclick="nextScreen()">
-        Continuar con Google
-      </button>
-
-      <button class="button light" onclick="nextScreen()">
-        Continuar con Apple
-      </button>
-
-      <button class="button secondary" onclick="nextScreen()">
-        Usar email
-      </button>
-
-      <button class="button secondary" onclick="nextScreen()">
-        Ahora no
-      </button>
-    </section>
-
-    <!-- 10. Temporizador -->
-    <section class="screen" data-screen="9">
-      <div class="eyebrow">Tu próximo paso empieza ahora</div>
-      <h2>Un bloque. Un paso. Sin presión.</h2>
-
-      <div class="timer-card">
-        <div class="timer-label" id="timerTask">
-          Tu tarea está lista.
-        </div>
-
-        <div class="timer" id="timer">15:00</div>
-
-        <div class="timer-label">
-          Concéntrate únicamente en el siguiente paso.
-        </div>
-      </div>
-
-      <button class="button" id="timerButton" onclick="startTimer()">
-        Empezar 15 minutos
-      </button>
-
-      <button class="button secondary" onclick="showPaywall()">
-        Ver opciones premium
-      </button>
-    </section>
-
-    <!-- 11. Victoria -->
-    <section class="screen" data-screen="10">
-      <div class="success-icon">✓</div>
-
-      <h2>Has dado el primer paso.</h2>
-      <p>
-        No necesitabas terminarlo todo.
-        Solo necesitabas empezar.
-      </p>
-
-      <div class="task-card">
-        <div class="task-label">Bloque completado</div>
-        <div class="task-title" id="completedTask">
-          Tu primer bloque de enfoque.
-        </div>
-
-        <div class="task-label">Progreso de hoy</div>
-        <strong>15 minutos completados</strong>
-      </div>
-
-      <button class="button" onclick="showPaywall()">
-        Elegir mi próximo bloque
-      </button>
-
-      <button class="button secondary" onclick="goToScreen(9)">
-        Terminar por hoy
-      </button>
-    </section>
-
-    <!-- 12. Paywall -->
-    <section class="screen" data-screen="11">
-      <div class="eyebrow">SoloFocus 15 Premium</div>
-      <h2>Tu enfoque puede convertirse en un hábito.</h2>
-
-      <div class="paywall">
-        <h3>Avanza con más claridad cada día.</h3>
-
-        <p>
-          Desbloquea herramientas para convertir tareas pendientes
-          en pasos claros y bloques de progreso.
-        </p>
-
-        <div class="benefits">
-          <div class="benefit">
-            <span>✓</span>
-            <div>Convierte tareas complejas en primeros pasos.</div>
-          </div>
-
-          <div class="benefit">
-            <span>✓</span>
-            <div>Crea rutinas diarias de enfoque.</div>
-          </div>
-
-          <div class="benefit">
-            <span>✓</span>
-            <div>Guarda tu historial y progreso.</div>
-          </div>
-
-          <div class="benefit">
-            <span>✓</span>
-            <div>Personaliza tus bloques de trabajo.</div>
-          </div>
-        </div>
-
-        <div class="plans">
-          <div class="plan recommended">
-            <div>
-              <div class="plan-title">Anual · Mejor valor</div>
-              <div class="plan-subtitle">Acceso durante un año</div>
-            </div>
-
-            <div class="plan-price">
-              US$39,99
-              <small>al año</small>
-            </div>
-          </div>
-
-          <div class="plan">
-            <div>
-              <div class="plan-title">Mensual</div>
-              <div class="plan-subtitle">Cancela cuando quieras</div>
-            </div>
-
-            <div class="plan-price">
-              US$9,99
-              <small>al mes</small>
-            </div>
-          </div>
-        </div>
-
-        <button class="button" onclick="alert('Esta es una demo. El pago se conectará más adelante.')">
-          Desbloquear SoloFocus 15
-        </button>
-
-        <button class="button secondary" onclick="goToScreen(9)">
-          Continuar con la versión gratuita
-        </button>
-
-        <div class="legal">
-          Precios provisionales para la demo. No hay pagos reales conectados.
-          Las condiciones definitivas se definirán antes del lanzamiento.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    let currentScreen = 0;
-    let selectedTask = "Preparar el primer paso de un proyecto.";
-    let timerSeconds = 15 * 60;
-    let timerInterval = null;
-
-    const screens = document.querySelectorAll(".screen");
-    const progressBar = document.getElementById("progressBar");
-    const stepText = document.getElementById("stepText");
-
-    function updateScreen() {
-      screens.forEach((screen, index) => {
-        screen.classList.toggle("active", index === currentScreen);
-      });
-
-      const totalSteps = 10;
-      const visibleStep = Math.min(currentScreen + 1, totalSteps);
-      const progress = Math.min((visibleStep / totalSteps) * 100, 100);
-
-      progressBar.style.width = progress + "%";
-      stepText.textContent = `Paso ${visibleStep} de ${totalSteps}`;
-
-      if (currentScreen >= 9) {
-        stepText.textContent = "Tu enfoque";
-      }
-
-      document.getElementById("taskTitle").textContent = selectedTask;
-      document.getElementById("completedTask").textContent = selectedTask;
-      document.getElementById("timerTask").textContent = selectedTask;
+    <button onclick="next()">Me comprometo</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">⏰</div>
+    <h2>15 minutos sí cuentan</h2>
+    <p>Quince minutos al día pueden convertirse en más de 91 horas de enfoque al año.</p>
+    <button onclick="next()">Quiero comenzar</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">📝</div>
+    <h2>Elige tu primera tarea</h2>
+    <p>Hazla pequeña y concreta.</p>
+    <button class="option" onclick="selectOption(this)">Responder un mensaje</button>
+    <button class="option" onclick="selectOption(this)">Ordenar un espacio</button>
+    <button class="option" onclick="selectOption(this)">Avanzar en un proyecto</button>
+    <button class="option" onclick="selectOption(this)">Otra tarea</button>
+    <button onclick="next()">Seleccionar tarea</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">✏️</div>
+    <h2>Hazlo todavía más sencillo</h2>
+    <p>Escribe o imagina la versión más pequeña de tu tarea.</p>
+    <div class="task">
+      <strong>Ejemplo:</strong>
+      En lugar de “ordenar toda la casa”, comienza con “guardar cinco objetos”.
+    </div>
+    <button onclick="next()">Ya tengo mi primer paso</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">🪜</div>
+    <h2>Prepara tu primer movimiento</h2>
+    <p>¿Qué necesitas tener listo para comenzar?</p>
+    <div class="task">
+      <strong>Mi primer movimiento:</strong>
+      Abrir, colocar o preparar solamente lo necesario.
+    </div>
+    <button onclick="next()">Estoy listo</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">🔔</div>
+    <h2>Un recordatorio amable</h2>
+    <p>Elige un momento del día para volver a tu enfoque.</p>
+    <button class="option" onclick="selectOption(this)">🌅 Por la mañana</button>
+    <button class="option" onclick="selectOption(this)">☀️ Por la tarde</button>
+    <button class="option" onclick="selectOption(this)">🌙 Por la noche</button>
+    <button onclick="next()">Guardar recordatorio</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">🕒</div>
+    <h2>Tu sesión de enfoque</h2>
+    <p>Durante estos minutos, solo necesitas volver a tu siguiente paso.</p>
+    <div class="timer" id="timer">15:00</div>
+    <button id="timerButton" onclick="startTimer()">Iniciar temporizador</button>
+    <button class="secondary" onclick="next()">Terminar sesión</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration success">⭐</div>
+    <h2>¡Lo hiciste!</h2>
+    <p>Hoy no necesitabas hacerlo todo. Necesitabas comenzar, y lo hiciste.</p>
+    <div class="task">
+      <strong>Recuerda:</strong>
+      Cada pequeño paso fortalece tu capacidad de enfocarte.
+    </div>
+    <button onclick="next()">Continuar</button>
+  </section>
+
+  <section class="screen">
+    <div class="illustration">🧰</div>
+    <h2>Tu enfoque puede seguir creciendo</h2>
+    <p>Desbloquea más herramientas para crear una rutina de enfoque.</p>
+    <div class="price">US$39,99 al año</div>
+    <p>Precio provisional de demostración.</p>
+    <button onclick="alert('Esta es una pantalla de demostración. El pago aún no está conectado.')">Comenzar prueba</button>
+    <button class="secondary" onclick="restart()">Volver al inicio</button>
+  </section>
+
+  <div class="footer">Un paso pequeño. Un momento de enfoque.</div>
+
+</div>
+
+<script>
+let current = 0;
+let screens = document.querySelectorAll(".screen");
+let progressBar = document.getElementById("progressBar");
+let timerInterval;
+let seconds = 900;
+
+function updateProgress() {
+  let percent = ((current + 1) / screens.length) * 100;
+  progressBar.style.width = percent + "%";
+}
+
+function next() {
+  if (current < screens.length - 1) {
+    screens[current].classList.remove("active");
+    current++;
+    screens[current].classList.add("active");
+    updateProgress();
+    window.scrollTo(0, 0);
+  }
+}
+
+function restart() {
+  screens[current].classList.remove("active");
+  current = 0;
+  screens[current].classList.add("active");
+  updateProgress();
+}
+
+function selectOption(button) {
+  let options = button.parentElement.querySelectorAll(".option");
+  options.forEach(option => option.classList.remove("selected"));
+  button.classList.add("selected");
+}
+
+function startTimer() {
+  let timer = document.getElementById("timer");
+  let button = document.getElementById("timerButton");
+
+  if (timerInterval) return;
+
+  button.textContent = "Enfoque en marcha…";
+
+  timerInterval = setInterval(function() {
+    if (seconds <= 0) {
+      clearInterval(timerInterval);
+      timer.textContent = "00:00";
+      button.textContent = "¡Sesión terminada!";
+      return;
     }
 
-    function nextScreen() {
-      if (currentScreen < screens.length - 1) {
-        currentScreen++;
-        updateScreen();
-      }
-    }
+    seconds--;
 
-    function goToScreen(number) {
-      currentScreen = number;
-      updateScreen();
-    }
+    let minutes = Math.floor(seconds / 60);
+    let remainingSeconds = seconds % 60;
 
-    function selectChoice(button) {
-      const parent = button.parentElement;
+    timer.textContent =
+      String(minutes).padStart(2, "0") + ":" +
+      String(remainingSeconds).padStart(2, "0");
+  }, 1000);
+}
 
-      parent.querySelectorAll(".choice").forEach(choice => {
-        choice.classList.remove("selected");
-      });
+updateProgress();
+</script>
 
-      button.classList.add("selected");
-    }
-
-    function chooseTask(task) {
-      selectedTask = task;
-      goToScreen(6);
-    }
-
-    function showCustomTask() {
-      document.getElementById("customTask").classList.remove("hidden");
-      document.getElementById("customTaskInput").focus();
-    }
-
-    function saveCustomTask() {
-      const input = document.getElementById("customTaskInput");
-      const value = input.value.trim();
-
-      if (!value) {
-        input.focus();
-        return;
-      }
-
-      selectedTask = value;
-      goToScreen(6);
-    }
-
-    function startTimer() {
-      const button = document.getElementById("timerButton");
-
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        button.textContent = "Continuar";
-        return;
-      }
-
-      button.textContent = "Pausar";
-
-      timerInterval = setInterval(() => {
-        timerSeconds--;
-
-        const minutes = Math.floor(timerSeconds / 60);
-        const seconds = timerSeconds % 60;
-
-        document.getElementById("timer").textContent =
-          `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-        if (timerSeconds <= 0) {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          timerSeconds = 15 * 60;
-          button.textContent = "Empezar de nuevo";
-          goToScreen(10);
-        }
-      }, 1000);
-    }
-
-    function showPaywall() {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-
-      goToScreen(11);
-    }
-
-    updateScreen();
-  </script>
 </body>
 </html>
