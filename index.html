@@ -234,7 +234,13 @@ button.secondary {
 <div class="app">
 
   <div class="logo">Solo<span>Focus</span> 15</div>
-<div class="trial-card">
+<div class="trial-card" id="trialCard">
+  <strong>🌱 Tu prueba gratuita está activa</strong>
+  <div class="trial-day" id="trialDay">Día 1 de 7</div>
+  <p id="trialMessage">
+    Te quedan 6 días para descubrir tu rutina de enfoque.
+  </p>
+</div>
   <strong>🌱 Tu prueba gratuita está activa</strong>
   <div class="trial-day">Día 1 de 7</div>
   <p>Te quedan 6 días para descubrir tu rutina de enfoque.</p>
@@ -438,7 +444,48 @@ function startTimer() {
 }
 
 updateProgress();
-</script>
+const trialStartKey = "solofocus15_trial_start";
+
+const savedTrialStart = localStorage.getItem(trialStartKey);
+
+if (!savedTrialStart) {
+  localStorage.setItem(trialStartKey, Date.now().toString());
+}
+
+function updateTrial() {
+  const start = Number(localStorage.getItem(trialStartKey));
+
+  const elapsedDays = Math.floor(
+    (Date.now() - start) / 86400000
+  );
+
+  const currentDay = Math.min(elapsedDays + 1, 7);
+  const remainingDays = Math.max(7 - currentDay, 0);
+
+  const dayElement = document.getElementById("trialDay");
+  const messageElement = document.getElementById("trialMessage");
+  const cardElement = document.getElementById("trialCard");
+
+  if (!dayElement || !messageElement || !cardElement) {
+    return;
+  }
+
+  if (remainingDays > 0) {
+    dayElement.textContent = `Día ${currentDay} de 7`;
+
+    messageElement.textContent =
+      `Te quedan ${remainingDays} días para descubrir tu rutina de enfoque.`;
+  } else {
+    dayElement.textContent = "Prueba finalizada";
+
+    messageElement.textContent =
+      "Tu prueba gratuita de 7 días terminó. Elige un plan para continuar.";
+
+    cardElement.style.background = "#f5c7a9";
+  }
+}
+
+updateTrial();</script>
 
 </body>
 </html>
