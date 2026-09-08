@@ -414,7 +414,33 @@ button.secondary {
   <div class="footer">Un paso pequeño. Un momento de enfoque.</div>
 
 </div>
+function checkTrialEnd() {
+  const trialStart = Number(
+    localStorage.getItem("solofocus15_trial_start")
+  );
 
+  if (!trialStart) return;
+
+  const elapsedDays = Math.floor(
+    (Date.now() - trialStart) / 86400000
+  );
+
+  if (elapsedDays >= 7) {
+    document.querySelectorAll(".screen").forEach(function(screen) {
+      screen.classList.remove("active");
+      screen.style.display = "none";
+    });
+
+    const subscriptionScreen = document.getElementById("subscription");
+
+    if (subscriptionScreen) {
+      subscriptionScreen.classList.add("active");
+      subscriptionScreen.style.display = "block";
+    }
+  }
+}
+
+checkTrialEnd();
 <script>
 let current = 0;
 let screens = document.querySelectorAll(".screen");
